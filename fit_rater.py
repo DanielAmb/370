@@ -143,7 +143,7 @@ names = ["short-sleeve shirt", "long-sleeve shirt", "short-sleeveoutwear", "long
 model = YOLO(pwd + "/best.pt")  # load a model
 have_a_model = True
 
-cv2.imwrite("my_image3.jpg", rate_my_fit(pwd + "/sweater.jpg"))
+cv2.imwrite("my_image.jpg", rate_my_fit(pwd + "/pink.jpg"))
 # print(imread(pwd + "/none.jpg"))
 
 

@@ -34,31 +34,69 @@
 
 # print(torch.load("370/best.pt"))
 
-from PIL import Image
-from collections import Counter
+# from PIL import Image
+# from collections import Counter
 
-def get_main_color(image_path, num_colors=10):
-    # Open the image
-    img = Image.open(image_path)
+# def get_main_color(image_path, num_colors=10):
+#     # Open the image
+#     img = Image.open(image_path)
 
-    # Resize the image to reduce the number of pixels
-    img = img.resize((150, 150))
+#     # Resize the image to reduce the number of pixels
+#     img = img.resize((150, 150))
 
-    # Convert image to RGB mode (in case it's in another mode)
-    img = img.convert("RGB")
+#     # Convert image to RGB mode (in case it's in another mode)
+#     img = img.convert("RGB")
 
-    # Get all pixels from the image
-    pixels = list(img.getdata())
+#     # Get all pixels from the image
+#     pixels = list(img.getdata())
 
-    # Count the frequency of each color in the image
-    color_count = Counter(pixels)
+#     # Count the frequency of each color in the image
+#     color_count = Counter(pixels)
 
-    # Get the most common color
-    most_common_colors = color_count.most_common(num_colors)
+#     # Get the most common color
+#     most_common_colors = color_count.most_common(num_colors)
 
-    # Return the most common color
-    return most_common_colors[0][0] if num_colors == 1 else most_common_colors
+#     # Return the most common color
+#     return most_common_colors[0][0] if num_colors == 1 else most_common_colors
 
-# Usage example
-main_color = get_main_color('370/sweater2.jpg')
-print("Main color (R, G, B):", main_color)
+# # Usage example
+# main_color = get_main_color('370/sweater2.jpg')
+# print("Main color (R, G, B):", main_color)
+
+# import numpy as np
+# import cv2
+# from PIL import Image
+# import matplotlib.pyplot as plt
+# from sklearn.cluster import KMeans
+
+
+# new_image = plt.imread('370/pink.jpg')
+# flat_img = np.reshape(new_image,(-1,3))
+# kmeans = KMeans(n_clusters=5,random_state=0)
+# kmeans.fit(flat_img)
+# print(kmeans)
+# img = plt.imshow(kmeans)
+# plt.show()
+# flat_img = np.reshape(img,(-1,3))
+# cv2.imwrite("my_image5.jpg", img)
+
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.cluster import KMeans
+
+# Assuming you already have new_image and flat_img defined
+new_image = plt.imread('370/pink.jpg')
+flat_img = np.reshape(new_image, (-1, 3))
+
+# KMeans clustering
+kmeans = KMeans(n_clusters=5, random_state=0)
+kmeans.fit(flat_img)
+
+# Display the cluster centers (dominant colors)
+cluster_centers = kmeans.cluster_centers_
+print("Cluster Centers (Dominant Colors):")
+print(cluster_centers)
+
+percentages = (np.unique(kmeans.labels_,return_counts=True)[1])/flat_img.shape[0]
+# p_and_c = zip(percentages,dominant_colors)
+print(percentages)

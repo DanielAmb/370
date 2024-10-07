@@ -61,12 +61,26 @@ def is_not_grey(color):
     return hsv_color[0][0][1] > 50  # Filter out colors with low saturation
 
 def get_colors(img):
-    flat_img = np.reshape(img,(-1,3))
-    kmeans = KMeans(n_clusters=4,random_state=1)
+    # flat_img = np.reshape(img,(-1,3))
+    # kmeans = KMeans(n_clusters=2,random_state=0)
+    # kmeans.fit(flat_img)
+    # dominant_colors = np.array(kmeans.cluster_centers_,dtype='uint')
+    # percentages = (np.unique(kmeans.labels_,return_counts=True)[1])/flat_img.shape[0]
+    flat_img = np.reshape(img, (-1, 3))
+
+    # KMeans clustering
+    kmeans = KMeans(n_clusters=5, random_state=0)
     kmeans.fit(flat_img)
-    dominant_colors = np.array(kmeans.cluster_centers_,dtype='uint')
+
+    # Display the cluster centers (dominant colors)
+    cluster_centers = kmeans.cluster_centers_
+    # print("Cluster Centers (Dominant Colors):")
+    # print(cluster_centers)
+
     percentages = (np.unique(kmeans.labels_,return_counts=True)[1])/flat_img.shape[0]
-    p_and_c = zip(percentages,dominant_colors)
+    # p_and_c = zip(percentages,dominant_colors)
+    # print(percentages)
+    p_and_c = zip(percentages,cluster_centers)
     colors = []
     for p,c in p_and_c:
         if p > 0.1:
