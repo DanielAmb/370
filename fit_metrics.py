@@ -54,60 +54,35 @@ def cropToBbox(img, bbox):
     crop_img = img[y_min:y_max, x_min:x_max]
     return crop_img
 
-# Loop through randomly pixels. checking arethesame. if same add to count else add to array of colors.
-
 def is_not_grey(color):
     hsv_color = cv2.cvtColor(np.uint8([[color]]), cv2.COLOR_RGB2HSV)
     return hsv_color[0][0][1] > 50  # Filter out colors with low saturation
 
 def get_colors(img):
-    # flat_img = np.reshape(img,(-1,3))
-    # kmeans = KMeans(n_clusters=2,random_state=0)
-    # kmeans.fit(flat_img)
-    # dominant_colors = np.array(kmeans.cluster_centers_,dtype='uint')
-    # percentages = (np.unique(kmeans.labels_,return_counts=True)[1])/flat_img.shape[0]
+
     flat_img = np.reshape(img, (-1, 3))
 
-    # KMeans clustering
     kmeans = KMeans(n_clusters=5, random_state=0)
     kmeans.fit(flat_img)
 
-    # Display the cluster centers (dominant colors)
     cluster_centers = kmeans.cluster_centers_
-    # print("Cluster Centers (Dominant Colors):")
-    # print(cluster_centers)
 
     percentages = (np.unique(kmeans.labels_,return_counts=True)[1])/flat_img.shape[0]
-    # p_and_c = zip(percentages,dominant_colors)
-    # print(percentages)
-    p_and_c = zip(percentages,cluster_centers)
+
+    p_and_c = list(zip(percentages,cluster_centers))
+
+    sortedPC = sorted(p_and_c, key=lambda x: x[0], reverse=True)
+
     colors = []
-    for p,c in p_and_c:
-        if p > 0.1:
+    for p,c in sortedPC:
+        if p > 0.2:
             colors.append(c)
+
     return colors
 
-
-# def is_not_grey(color):
-#     hsv_color = cv2.cvtColor(np.uint8([[color]]), cv2.COLOR_RGB2HSV)
-#     return hsv_color[0][0][1] > 50  # Filter out colors with low saturation
-
-# def get_colors(img):
-#     flat_img = np.reshape(img, (-1, 3))
-    
-#     kmeans = KMeans(n_clusters=4, random_state=1)
-#     kmeans.fit(flat_img)
-    
-#     dominant_colors = np.array(kmeans.cluster_centers_, dtype='uint')
-#     percentages = (np.unique(kmeans.labels_, return_counts=True)[1]) / flat_img.shape[0]
-    
-#     p_and_c = zip(percentages, dominant_colors)
-    
-#     # Filter colors that are not grey and appear more than 10%
-#     colors = [c for p, c in p_and_c if p > 0.1 and is_not_grey(c)]
-    
-#     return colors
-
+def is_not_grey(color):
+    hsv_color = cv2.cvtColor(np.uint8([[color]]), cv2.COLOR_RGB2HSV)
+    return hsv_color[0][0][1] > 50  # Filter out colors with low saturation
 
 def get_complexity(img):
     edges = Canny(img,50,150,apertureSize = 3)
@@ -121,7 +96,7 @@ def get_complexity(img):
 def areTheSame(c1, c2, tolerance=20):    
     # Convert RGB to XYZ color space
     def rgb_to_xyz(rgb):
-        r, g, b = [x / 255.0 for x in rgb]
+        b, g, r = [x / 255.0 for x in rgb]
         r = r ** 2.2
         g = g ** 2.2
         b = b ** 2.2
@@ -215,15 +190,3 @@ def getAesthetic(colors, tolerance=0.5):
     if aesthetics[0] > tolerance: return "vibrant"
     elif aesthetics[1] > tolerance: return "gloomy"
     else: return "neutral"
-
-
-# describe what we see
-# complexity of clothing (average complexity rating should be about 0.5)
-# 0 stong colors = too simple
-# >3 "strong" colors = too many
-# Color check: color compatibility
-# Weather check
-
-
-
-# aesthetic (gloomy, bland, bright)
