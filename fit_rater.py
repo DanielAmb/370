@@ -53,14 +53,10 @@ def get_colour_name(bgr_tuple):
         min_colours[(rd + gd + bd)] = name
     
     return min_colours[min(min_colours.keys())]
-    
 
 def generateRating(img, outfit):
-    """
-    Returns a string describing the rating of a particular outfit
-    """
     main_colors = []
-    strong_colors = []
+    only_colors = []
     complexities = []
     aesthetics = {"neutral":0, "gloomy":0, "vibrant":0}
     incompatibilities = []
@@ -70,78 +66,41 @@ def generateRating(img, outfit):
         colors = metrics.get_colors(cropped_article)
         print(colors)
         main_colors.append((category, colors[0]))
-        # for c in colors:
-        #     if not metrics.isNeutral(c):
-        #         add = True
-        #         for strongC in strong_colors:
-        #             if metrics.areTheSame(strongC, c): add = False
-        #         if add: strong_colors.append(c)
-        # aesthetics[metrics.getAesthetic(colors)] += 1
+        only_colors.append((colors[0]))
+
     i = 0
-    for category, color in main_colors:
+    for category, color in main_colors: 
         print(str(category) + ": " + str(get_colour_name(color)) + ". Complexity = " + str(complexities[i]) + "\n")
-        print(str(metrics.getAesthetic(colors)) + "\n")
         i += 1
     
-    # print(str(metrics.areCompatible(colors)) + "\n")
-    # print(complexities)
-    # print(main_colors)
-    # get_colour_name(color)
+    print("Aesthetic: " + str(metrics.getAesthetic(only_colors)) + "\n")
+    
+    for color in only_colors:
+        print("Gloomy: " + str(metrics.isGloomy(color)))
+        print("Neutral: " + str(metrics.isNeutral(color)))
+        print("Bright: " + str(metrics.isBright(color)))
+        print("Vibrant: " + str(metrics.isVibrant(color)))
+        print("Grey: " + str(not metrics.is_not_grey(color)) + "\n")
 
-    # out = "After careful analysis of your fit, I came to the following conclusions: You've got on "
-    # if len(main_colors) > 1:
-    #     out += "a"
-    #     for category, color in main_colors[:-1]:
-    #         # print("\n            " + str(color) + "            \n")
-    #         out += " " + convert_bgr_to_name(color) + " " + category + ", a"
-    #     print("\n            " + str(main_colors[0][1]) + "            \n")
-    #     print(colors)
-    #     print("\n            " + str(main_colors[1][1]) + "            \n")
-    #     out += "nd a " + convert_bgr_to_name(main_colors[-1][1]) + " " + main_colors[-1][0] + ". "
-    # elif len(main_colors) == 1:
-    #     # print("\n            " + str(main_colors[0][1]) + "            \n")
-    #     out += "a " + convert_bgr_to_name(main_colors[0][1]) + " " + main_colors[0][0] + ". "
-    # else: 
-    #     out += "nothing discernible. Dress up and try again."
-    #     return out
-    # out += " The overall complexity of the patterns in your outfit were scored at " + str(np.mean(complexities)*100) + " percent, "
-    # if np.mean(complexities) > 0.7: out += "a bit high for my liking... Maybe throw in some solid colors? "
-    # elif np.mean(complexities) < 0.3: out += "which is pretty low... Try spicing it up with some fun patterns next time. "
-    # else: "a very reasonable score. Keep up the good work. "
 
-    # out += "In terms of your color palette, "
-    # if len(strong_colors) > 3: out += "I noticed that you've opted for not one, not two, but " + str(len(strong_colors)) + " bold colors for your fit. While I commend your creativity, you should consider throwing in some muted tones as well...X"
-    # elif len(strong_colors) == 0: out += "I couldn't help but notice you've only chosen neutral colors today. A splash of color would do you wonders! "
-    # else: " you've got a good balance of bold colors in your fit. "
+    if len(main_colors) < 1:
+        print("Nothing discernible. Dress up and try again.")
+        exit()
+   
+    print("Overall Complexity: " + str(np.mean(complexities)*100) + " %")
 
     errors = []
     for _, c1 in main_colors:
         for _, c2 in main_colors:
             if not metrics.areCompatible(c1, c2): 
                 errors.append((get_colour_name(c1), get_colour_name(c2)))
-    print("When it comes to color theory, you made " + str(len(errors)) + " mistakes. \n")
+    print("When it comes to color theory, you made " + str(len(errors)) + " mistakes.")
     if len(errors) > 0:
         print("Those were the following color pairs: " + str(errors) + "... Maybe take some notes for next time. ")
     else:
         print("Congrats! ")
 
-
-    # if len(incompatibilities) > 1:
-    #     for inc in incompatibilities[:-1]:
-    #         out += "Maybe you should re-think wearing the " + str(inc) + ", "
-    #     out += "and " + incompatibilities[-1] + "."
-    # elif len(incompatibilities) == 1:
-    #     out += "Maybe you should re-think wearing the " + str(incompatibilities[0]) + "... "
-    # else:
-    #     out += "I think your fit will do just fine. "
-    
-    # gloomCount = 100*aesthetics["gloomy"]/len(outfit)
-    # vibCount = 100*aesthetics["vibrant"]/len(outfit)
-    # neutralCount = 100*aesthetics["neutral"]/len(outfit)
-
-    # out += "Anyway, I've scored your vibe as " + str(gloomCount) + " percent gloomy, " + str(vibCount) + " percent bubbly, and " + str(neutralCount) + " percent boring. Keep up the good work!"
-    
-    return 'out'
+    return ''
     
 def rate_my_fit(filepath):
     img = cv2.imread(filepath)
@@ -165,11 +124,11 @@ def rate_my_fit(filepath):
         exit()
         
     text = generateRating(img, outfit)
-    print(text)
+    
     for class_name, bbox in outfit:
         img = metrics.visualize_bbox(img, bbox, class_name)
     # os.remove(filepath)
-    return img
+    return img, text
 
 pwd = os.path.realpath(os.path.dirname(__file__))
 names = ["short-sleeve shirt", "long-sleeve shirt", "short-sleeveoutwear", "long-sleeveoutwear", "pair of shorts", "pair of pants", "skirt", "hat", "shoe"]

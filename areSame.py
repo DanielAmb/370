@@ -81,27 +81,27 @@
 # cv2.imwrite("my_image5.jpg", img)
 
 ######################################################################
-import matplotlib.pyplot as plt
-import numpy as np
-from sklearn.cluster import KMeans
+# import matplotlib.pyplot as plt
+# import numpy as np
+# from sklearn.cluster import KMeans
 
-# Assuming you already have new_image and flat_img defined
-new_image = plt.imread('370/sweater2.jpg')
-flat_img = np.reshape(new_image, (-1, 3))
+# # Assuming you already have new_image and flat_img defined
+# new_image = plt.imread('370/sweater2.jpg')
+# flat_img = np.reshape(new_image, (-1, 3))
 
-# KMeans clustering
-kmeans = KMeans(n_clusters=5, random_state=0)
-kmeans.fit(flat_img)
+# # KMeans clustering
+# kmeans = KMeans(n_clusters=5, random_state=0)
+# kmeans.fit(flat_img)
 
-# Display the cluster centers (dominant colors)
-cluster_centers = kmeans.cluster_centers_
-print("Cluster Centers (Dominant Colors):")
-print(cluster_centers)
+# # Display the cluster centers (dominant colors)
+# cluster_centers = kmeans.cluster_centers_
+# print("Cluster Centers (Dominant Colors):")
+# print(cluster_centers)
 
-percentages = (np.unique(kmeans.labels_,return_counts=True)[1])/flat_img.shape[0]
-# p_and_c = zip(percentages,dominant_colors)
-print(percentages)
-# print(list(zip(percentages,cluster_centers)))
+# percentages = (np.unique(kmeans.labels_,return_counts=True)[1])/flat_img.shape[0]
+# # p_and_c = zip(percentages,dominant_colors)
+# print(percentages)
+# # print(list(zip(percentages,cluster_centers)))
 ######################################################################
 
 # import webcolors
@@ -159,3 +159,8 @@ print(percentages)
 
 # closest_colorname = get_colour_name(rgb)
 # print(f'the closest CSS color to , which is RGBA={rgb} is {closest_colorname}')
+import os
+
+print(os.path.dirname(__file__))
+file_path = os.path.join('..', 'media', 'best.pt')
+print(file_path)
